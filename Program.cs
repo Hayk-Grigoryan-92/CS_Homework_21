@@ -15,8 +15,11 @@ namespace ConsoleApp1
 
             //---------------------------------------------------------
 
-            CasinoDise caseinoGame = new CasinoDise();
-            caseinoGame.Casiono();
+            //CasinoDise caseinoGame = new CasinoDise();
+            //caseinoGame.CasionoDice();
+
+            CasinoRoulette casinoRoulette = new CasinoRoulette();
+            casinoRoulette.CasinoRouletteGame();
 
 
         }

@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    internal class CasinoDise
+    internal class CasinoRoulette
     {
-        public void CasionoDice()
+        public void CasinoRouletteGame()
         {
-            Casino casino = new Casino(100);
+            CasinoR casino = new CasinoR(100);
 
             while (true)
             {
                 casino.ShowBalance();
                 Console.WriteLine("Choose the game ");
-                Console.Write("1. Number bet | 2. Odd bet | 3. Even bet | 4. Exit");
+                Console.Write("1. Number bet | 2. Black bet | 3. Red bet | 4. Green 'Zero' bet | 5 Exit");
                 Console.WriteLine();
                 int choice = int.Parse(Console.ReadLine());
-                if (choice < 1 || choice > 4)
+                if (choice < 1 || choice > 5)
                 {
                     Console.WriteLine("You enter wrong choice, please try again");
-                    continue ;
+                    continue;
                 }
-                else if (choice == 4)
+                else if (choice == 5)
                 {
                     break;
                 }
@@ -40,10 +40,10 @@ namespace ConsoleApp1
                             case 1:
                                 Console.WriteLine("Please choose dice number");
                                 int diceNumber = int.Parse(Console.ReadLine());
-                                if (diceNumber >= 1 && diceNumber <= 6)
+                                if (diceNumber >= 1 && diceNumber <= 36)
                                 {
-                                    Bet bet = new NumberBet(betAmount)
-                                   {
+                                    BetRoullete bet = new NumberBetR(betAmount)
+                                    {
                                         BetDice = diceNumber
                                     };
                                     casino.PlaceBet(bet);
@@ -54,12 +54,16 @@ namespace ConsoleApp1
                                 }
                                 break;
                             case 2:
-                                Bet bet2 = new OddBet(betAmount);
+                                BetRoullete bet2 = new BetInBlack(betAmount);
                                 casino.PlaceBet(bet2);
                                 break;
                             case 3:
-                                Bet bet3 = new OddBet(betAmount);
+                                BetRoullete bet3 = new BetInRed(betAmount);
                                 casino.PlaceBet(bet3);
+                                break;
+                            case 4:
+                                BetRoullete bet4 = new BetInGreen(betAmount);
+                                casino.PlaceBet(bet4);
                                 break;
                         }
                     }
@@ -72,7 +76,7 @@ namespace ConsoleApp1
         }
     }
 
-    class Bet
+    class BetRoullete
     {
         public int Amount;
         private int _betDice;
@@ -81,7 +85,7 @@ namespace ConsoleApp1
             get { return _betDice; }
             set
             {
-                if (value > 0 && value <= 6)
+                if (value >= 0 && value <= 36)
                 {
                     _betDice = value;
                 }
@@ -92,7 +96,7 @@ namespace ConsoleApp1
             }
         }
 
-        public Bet(int amount)
+        public BetRoullete(int amount)
         {
             Amount = amount;
         }
@@ -105,26 +109,45 @@ namespace ConsoleApp1
         public virtual int Payout(int Amount)
         {
             Console.WriteLine("Congratulations You Win!!!");
-            return Amount * 2;
+            return Amount * 18;
         }
     }
 
-    class NumberBet : Bet
+    class NumberBetR : BetRoullete
     {
 
-        public NumberBet(int amount) : base(amount)
+        public NumberBetR(int amount) : base(amount)
         {
 
         }
         public override int Payout(int Amount)
         {
             Console.WriteLine("Congratulations You Win!!!");
-            return Amount * 6;
+            return Amount * 36;
         }
     }
-    class OddBet : Bet
+
+    class BetInGreen : BetRoullete
     {
-        public OddBet(int amount) : base(amount)
+
+        public BetInGreen(int amount) : base(amount)
+        {
+
+        }
+
+        public override bool IsWinningBet(int diceRoll)
+        {
+            return diceRoll == 0;
+        }
+        public override int Payout(int Amount)
+        {
+            Console.WriteLine("Congratulations You Win!!!");
+            return Amount * 37;
+        }
+    }
+    class BetInBlack : BetRoullete
+    {
+        public BetInBlack(int amount) : base(amount)
         {
 
         }
@@ -133,9 +156,9 @@ namespace ConsoleApp1
             return diceRoll % 2 != 0;
         }
     }
-    class EvenBet : Bet
+    class BetInRed : BetRoullete
     {
-        public EvenBet(int amount) : base(amount)
+        public BetInRed(int amount) : base(amount)
         {
 
         }
@@ -145,11 +168,11 @@ namespace ConsoleApp1
         }
     }
 
-    class Casino
+    class CasinoR
     {
         private int _playerBalance = 100;
 
-        public Casino(int initialBalance)
+        public CasinoR(int initialBalance)
         {
             _playerBalance = initialBalance;
         }
@@ -159,7 +182,7 @@ namespace ConsoleApp1
             Console.WriteLine($"Your balance is : {_playerBalance}");
         }
 
-        public void PlaceBet(Bet bet)
+        public void PlaceBet(BetRoullete bet)
         {
             if (bet.Amount > _playerBalance)
             {
@@ -168,7 +191,7 @@ namespace ConsoleApp1
             }
 
             _playerBalance -= bet.Amount;
-            int diceRoll = new Random().Next(1, 7);
+            int diceRoll = new Random().Next(0, 37);
             Console.WriteLine($"Dice rolled: {diceRoll}");
 
             if (bet.IsWinningBet(diceRoll))
